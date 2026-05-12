@@ -1,195 +1,361 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
+<img src="https://img.shields.io/badge/Platform-Linux%20%7C%20Windows%20%7C%20macOS-27ae60?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Security-Defensive%20Only-red?style=for-the-badge&logo=shield&logoColor=white"/>
+
 # 🛡️ VPS Security Toolkit
 
-Toolkit lengkap untuk audit keamanan VPS & server — 5 modul defensif.
+**Advanced modular security toolkit for VPS auditing, SSL/TLS analysis, log monitoring, port scanning, and AI-generated media detection.**
 
-> ⚠️ **ETHICAL USE ONLY**
-> Semua tools hanya untuk server/domain **yang kamu miliki sendiri** atau sudah mendapat izin eksplisit.
+*Built for defenders. Designed for clarity. Powered by Python.*
+
+[Features](#-features) · [Installation](#-installation) · [Usage](#-quick-start) · [Modules](#-modules-overview) · [Reports](#-reports--database) · [License](#-license)
+
+</div>
 
 ---
 
-## 📦 Struktur Project
+## 📌 About
+
+VPS Security Toolkit (`momoru.py`) adalah toolkit keamanan berbasis Python yang dirancang untuk membantu **sysadmin**, **security researcher**, dan **developer** dalam melakukan audit keamanan server, analisis jaringan, dan investigasi insiden secara modular dan efisien.
+
+> ⚠️ Toolkit ini **hanya** diperuntukkan untuk keperluan **defensive security**, **audit internal**, dan **riset pendidikan**. Penggunaan di luar tujuan tersebut adalah tanggung jawab pengguna sepenuhnya.
+
+---
+
+## ✨ Features
+
+| # | Fitur | Deskripsi |
+|---|-------|-----------|
+| 🔐 | **VPS Security Audit** | Audit konfigurasi keamanan server via SSH |
+| 🌐 | **SSL/TLS Analyzer** | Analisis sertifikat HTTPS dan konfigurasi TLS |
+| 🚪 | **Port & Service Scanner** | Deteksi port terbuka dan identifikasi layanan |
+| 📄 | **Log Anomaly Detector** | Deteksi aktivitas mencurigakan dari log server |
+| 🖼️ | **AI Media Detector** | Heuristik deteksi media yang dibuat oleh AI |
+| 📊 | **JSON Report Export** | Ekspor hasil scan ke laporan terstruktur |
+| 🎨 | **Rich Terminal UI** | Tampilan terminal modern dan interaktif |
+| ⚡ | **Modular Architecture** | Arsitektur bersih dan mudah dikembangkan |
+| 🗂️ | **Local DB & Report Storage** | Penyimpanan hasil scan dengan SQLite |
+
+---
+
+## 📁 Project Structure
 
 ```
-vps-security-toolkit/
-├── config.yaml                       ← Isi dulu sebelum pakai!
+VPS-SECURITY-TOOLKIT/
+│
+├── core/
+│   └── session.py              # Session & shared utilities
+│
+├── data/
+│   ├── cache/                  # Cache hasil scan
+│   ├── reports/                # Output laporan JSON
+│   └── momoru.db               # SQLite database
+│
+├── logs/
+│   └── test.log
+│
+├── modules/
+│   ├── ai/                     # AI media detection
+│   ├── logs/                   # Log anomaly detection
+│   ├── ports/                  # Port & service scanner
+│   ├── ssl/                    # SSL/TLS analyzer
+│   └── vps/                    # VPS security audit
+│
+├── venv/                       # Virtual environment
+├── momoru.py                   # Entry point utama
 ├── requirements.txt
-├── findings.json                     ← Output temuan (dibuat otomatis)
-│
-├── 1_vps_security_checker/
-│   └── vps_security_checker.py       ← Audit konfigurasi VPS via SSH
-│
-├── 2_ai_media_detector/
-│   └── ai_media_detector.py          ← Deteksi gambar/video AI generated
-│
-├── 3_ssl_tls_analyzer/
-│   └── ssl_tls_analyzer.py           ← Audit sertifikat & enkripsi SSL/TLS
-│
-├── 4_port_service_scanner/
-│   └── port_service_scanner.py       ← Scan port terbuka & identifikasi risiko
-│
-└── 5_log_anomaly_detector/
-    └── log_anomaly_detector.py       ← Analisis log server untuk deteksi serangan
+├── sample.log
+└── README.md
 ```
 
 ---
 
-## 🚀 Setup
+## ⚙️ Installation
+
+### 1️⃣ Clone Repository
+
+```bash
+git clone https://github.com/USERNAME/VPS-SECURITY-TOOLKIT.git
+cd VPS-SECURITY-TOOLKIT
+```
+
+### 2️⃣ Buat Virtual Environment
+
+**Linux / macOS:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+**Windows:**
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+### 3️⃣ Install Dependencies
 
 ```bash
 pip install -r requirements.txt
-nano config.yaml    # Isi host VPS dan target_url kamu
 ```
 
 ---
 
-## ▶️ Cara Jalankan Per Modul
-
-### Modul 1 — VPS Security Checker
-```bash
-cd 1_vps_security_checker
-python vps_security_checker.py                         # pakai config.yaml
-python vps_security_checker.py --host 1.2.3.4 --user root --key ~/.ssh/id_rsa
-python vps_security_checker.py --output hasil.json
-```
-Apa yang dicek:
-- SSH hardening (root login, password auth, port default)
-- Firewall UFW & iptables aktif atau tidak
-- OS & security updates tertinggal
-- User dengan UID 0 tersembunyi
-- Fail2ban terinstall
-- Service berbahaya (Telnet, FTP)
-- Konfigurasi kernel (SYN cookies, IP forwarding)
-
----
-
-### Modul 2 — AI Media Detector
-```bash
-cd 2_ai_media_detector
-python ai_media_detector.py --file foto.jpg            # satu file
-python ai_media_detector.py --folder ./images/         # satu folder
-python ai_media_detector.py --file video.mp4           # video
-python ai_media_detector.py --file foto.jpg --threshold 70  # ubah sensitivitas
-python ai_media_detector.py --folder ./media/ --output hasil.json
-```
-Apa yang dianalisis:
-- Noise pattern (terlalu bersih = indikasi AI)
-- Distribusi warna (terlalu sempurna = AI)
-- Edge smoothness (khas diffusion model)
-- Metadata EXIF (ada/tidaknya info kamera asli)
-- Analisis frekuensi domain (FFT)
-- Resolusi standar AI generator
-
----
-
-### Modul 3 — SSL/TLS Analyzer
-```bash
-cd 3_ssl_tls_analyzer
-python ssl_tls_analyzer.py                             # pakai config.yaml
-python ssl_tls_analyzer.py --host example.com
-python ssl_tls_analyzer.py --host example.com --port 8443
-python ssl_tls_analyzer.py --host example.com --output ssl_result.json
-```
-Apa yang dicek:
-- Sertifikat expired atau hampir expired
-- CN mismatch & self-signed cert
-- Protokol TLS lama masih aktif (TLS 1.0, 1.1)
-- Cipher lemah (RC4, DES, 3DES, dll)
-- HSTS header aktif atau tidak
-- Subject Alternative Name (SAN)
-
----
-
-### Modul 4 — Open Port & Service Scanner
-```bash
-cd 4_port_service_scanner
-python port_service_scanner.py                         # pakai config.yaml
-python port_service_scanner.py --host 1.2.3.4
-python port_service_scanner.py --host 1.2.3.4 --ports 1-10000
-python port_service_scanner.py --host 1.2.3.4 --ports 22,80,443,3306,6379
-python port_service_scanner.py --host 1.2.3.4 --threads 200 --timeout 0.5
-python port_service_scanner.py --host 1.2.3.4 --output ports.json
-```
-Apa yang dicek:
-- Port terbuka dengan identifikasi service
-- Risk rating per port (CRITICAL/HIGH/MEDIUM/LOW)
-- Banner grabbing untuk deteksi versi
-- Database yang expose ke publik (MySQL, Redis, MongoDB, dll)
-- Docker API tanpa auth
-- Port default berbahaya (Telnet, RDP, VNC, dll)
-
----
-
-### Modul 5 — Log Anomaly Detector
-```bash
-cd 5_log_anomaly_detector
-python log_anomaly_detector.py                         # tampilkan panduan log
-python log_anomaly_detector.py --log /var/log/auth.log
-python log_anomaly_detector.py --log /var/log/nginx/access.log
-python log_anomaly_detector.py --log /var/log/syslog --lines 50000
-python log_anomaly_detector.py --log auth.log --output anomali.json
-python log_anomaly_detector.py --log access.log --top-ips 20
-```
-Apa yang dideteksi:
-- SSH brute force (login gagal berulang)
-- SQL injection attempt
-- XSS attempt
-- Directory traversal
-- Web scanner & automated tools
-- Login root dari IP eksternal
-- Sudo abuse
-- Port scan pattern
-- DDoS indicator
-- Reverse shell attempt
-- Crontab modification (persistence backdoor)
-
----
-
-## 🔄 Workflow Lengkap
+## 🚀 Quick Start
 
 ```bash
-# 1. Jalankan semua modul
-cd 1_vps_security_checker && python vps_security_checker.py && cd ..
-cd 3_ssl_tls_analyzer     && python ssl_tls_analyzer.py     && cd ..
-cd 4_port_service_scanner && python port_service_scanner.py && cd ..
-cd 5_log_anomaly_detector && python log_anomaly_detector.py \
-    --log /var/log/auth.log && cd ..
+python momoru.py
+```
 
-# 2. Analisis media jika perlu
-cd 2_ai_media_detector && python ai_media_detector.py --folder ./suspect/ && cd ..
+atau di Windows:
 
-# 3. Lihat semua temuan
-cat findings.json
+```bash
+py momoru.py
+```
+
+Setelah dijalankan, pilih modul yang diinginkan dari menu interaktif.
+
+---
+
+## 🧩 Modules Overview
+
+### 🔐 VPS Security Audit
+
+Melakukan audit mendalam terhadap konfigurasi keamanan server melalui koneksi SSH.
+
+**Deteksi meliputi:**
+- SSH Hardening & Root Login Check
+- Password Authentication Policy
+- Firewall Status (UFW / iptables)
+- Fail2Ban Detection
+- Dangerous Services
+- Hidden UID 0 Users
+- Security Updates
+- Kernel Security Configuration
+
+---
+
+### 🌐 SSL/TLS Analyzer
+
+Analisis konfigurasi HTTPS dan validasi sertifikat SSL/TLS.
+
+**Deteksi meliputi:**
+- Expired / Self-Signed Certificate
+- TLS Version Support
+- Weak Cipher Detection
+- HSTS Validation
+- SAN & CN Mismatch
+
+**Fitur tambahan:**
+- TLS Risk Rating
+- Cipher Enumeration
+- Certificate Parsing & HTTPS Validation
+
+---
+
+### 🚪 Port & Service Scanner
+
+Scanner TCP port untuk identifikasi layanan aktif dan potensi exposure.
+
+**Deteksi meliputi:**
+- Open Ports & Service Identification
+- Banner Grabbing
+- Public Database Exposure
+- Dangerous Default Ports
+- Docker API Exposure
+
+**Layanan yang didukung:**
+
+`MySQL` · `Redis` · `MongoDB` · `FTP` · `SSH` · `RDP` · `VNC` · `HTTP/HTTPS`
+
+---
+
+### 📄 Log Anomaly Detector
+
+Mendeteksi aktivitas mencurigakan dari log server secara otomatis.
+
+**Deteksi meliputi:**
+- SSH Brute Force
+- SQL Injection & XSS Attempt
+- Directory Traversal
+- Port Scanning Activity
+- Reverse Shell Indicators
+- DDoS Indicators
+- Root & Sudo Abuse
+- Persistence Behavior
+
+**Contoh file log yang didukung:**
+```
+/var/log/auth.log
+/var/log/syslog
+/var/log/nginx/access.log
 ```
 
 ---
 
-## 🧩 Tabel Modul
+### 🖼️ AI Media Detector
 
-| Modul | Tools | Target Input | Koneksi |
-|-------|-------|-------------|---------|
-| 1 | VPS Security Checker | VPS kamu | SSH |
-| 2 | AI Media Detector | File gambar/video | Lokal |
-| 3 | SSL/TLS Analyzer | Domain/IP | HTTPS |
-| 4 | Port Scanner | IP/domain | TCP |
-| 5 | Log Anomaly Detector | File log | Lokal |
+Mendeteksi indikasi media yang dibuat oleh AI menggunakan analisis heuristik.
+
+**Analisis meliputi:**
+- Noise Pattern Analysis
+- FFT Frequency Analysis
+- Edge Smoothness Detection
+- Metadata EXIF Inspection
+- AI Resolution Pattern
+- Color Distribution
+
+**Format yang didukung:**
+
+| Kategori | Format |
+|----------|--------|
+| 🖼️ Image | JPG, JPEG, PNG, WEBP |
+| 🎥 Video | MP4, AVI, MOV |
+
+> ⚠️ Analisis heuristik **tidak menjamin akurasi 100%**. Gunakan sebagai indikasi awal saja.
+
+---
+
+## 📊 Reports & Database
+
+### Output Laporan
+
+Semua hasil scan dapat disimpan ke direktori:
+```
+data/reports/
+```
+
+Format output: **JSON** — mudah diintegrasikan dengan tools lain.
+
+### Database
+
+Toolkit menggunakan **SQLite** untuk menyimpan:
+- Cache hasil scan
+- Findings & anomali
+- Riwayat scan
+- Hasil analisis
+
+```
+data/momoru.db
+```
 
 ---
 
 ## 📦 Dependencies
 
+| Package | Kegunaan |
+|---------|----------|
+| `requests` | HTTP requests |
+| `httpx` | Async HTTP client |
+| `rich` | Modern terminal UI |
+| `typer` | CLI framework |
+| `colorama` | Terminal color support |
+| `paramiko` | SSH connection |
+| `cryptography` | SSL/TLS parsing |
+| `Pillow` | Image processing |
+| `numpy` | Numerical computation |
+| `scipy` | Statistical analysis |
+| `pyyaml` | YAML parser |
+
+---
+
+## 🧠 Architecture
+
 ```
-httpx        → HTTP requests (modul 3)
-rich         → Terminal UI yang bagus
-pyyaml       → Baca config.yaml
-typer        → CLI framework
-colorama     → Warna terminal Windows
-paramiko     → SSH connection (modul 1)
-cryptography → SSL/TLS parsing
-Pillow       → Analisis gambar (modul 2)
-numpy        → Komputasi numerik (modul 2)
-scipy        → Analisis statistik (modul 2)
+core/       →  Session management & shared utilities
+modules/    →  Semua scanner & analyzer (modular)
+data/       →  Cache, reports, dan database
+logs/       →  Logging system
+```
+
+**Keunggulan arsitektur ini:**
+- ✅ Scalable — mudah ditambah modul baru
+- ✅ Reusable — komponen dapat digunakan ulang
+- ✅ Clean Separation — setiap modul berdiri sendiri
+- ✅ Maintainable — mudah di-debug dan dikembangkan
+
+---
+
+## 🖥️ Platform Support
+
+| Platform | Status |
+|----------|--------|
+| 🐧 Linux | ✅ Full Support |
+| 🪟 Windows | ✅ Full Support |
+| 🍎 macOS | ✅ Full Support |
+
+---
+
+## ⚡ Recommended Usage
+
+**Audit VPS Linux:**
+```bash
+python momoru.py
+# Pilih: [VPS SECURITY]
+```
+
+**Analisis Log Lokal:**
+```bash
+python momoru.py
+# Pilih: [LOG ANALYZER]
+```
+
+**Audit SSL/TLS Domain:**
+```bash
+python momoru.py
+# Masukkan: example.com
 ```
 
 ---
 
-*Dibuat untuk keperluan defensive security — audit VPS & media verification.*
+## 🔒 Ethical Use & Disclaimer
+
+Toolkit ini dikembangkan **semata-mata** untuk tujuan:
+
+- ✅ Defensive security
+- ✅ Audit internal server
+- ✅ VPS hardening
+- ✅ Educational & research
+- ✅ Incident investigation
+
+**Dilarang keras** menggunakan toolkit ini untuk:
+
+- ❌ Aktivitas ilegal dalam bentuk apapun
+- ❌ Scanning tanpa izin eksplisit
+- ❌ Unauthorized access ke sistem pihak ketiga
+- ❌ Attacking atau disrupting third-party systems
+
+> Pengembang **tidak bertanggung jawab** atas penyalahgunaan toolkit ini.
+
+---
+
+## 📝 Notes
+
+- Gunakan **Python 3.10+**
+- **Virtual environment** sangat direkomendasikan
+- Jalankan dengan **izin yang sesuai** (beberapa modul butuh root/admin)
+- Beberapa fitur memerlukan **koneksi internet aktif**
+- Beberapa modul memberikan hasil lebih optimal dengan akses **root/admin**
+
+---
+
+## 📜 License
+
+Distributed under the **MIT License**. See `LICENSE` for more information.
+
+---
+
+<div align="center">
+
+## 👨‍💻 Author
+
+**Momoru**
+
+*Focused on Defensive Security · VPS Hardening · Security Research · Threat Analysis*
+
+⭐ **Star this repo** jika toolkit ini bermanfaat bagi Anda!
+
+</div>
