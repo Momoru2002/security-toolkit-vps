@@ -1,0 +1,5 @@
+framework:
+  name: MOMORU
+
+database:
+  path: data/momoru.db

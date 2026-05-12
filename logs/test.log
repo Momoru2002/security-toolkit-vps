@@ -1,0 +1,7 @@
+@"
+2024-01-15 03:22:11 Failed password for root from 192.168.1.105 port 22
+2024-01-15 03:22:13 Failed password for root from 192.168.1.105 port 22
+2024-01-15 03:25:00 GET /admin/config.php 404
+2024-01-15 03:25:01 GET /wp-admin/setup-config.php 404
+2024-01-15 03:26:00 GET /etc/passwd HTTP/1.1 200
+"@ | Out-File -FilePath ".\test.log" -Encoding utf8
