@@ -78,7 +78,7 @@ VPS-SECURITY-TOOLKIT/
 ### 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/USERNAME/VPS-SECURITY-TOOLKIT.git
+git clone https://github.com/momoru2002/VPS-SECURITY-TOOLKIT.git
 cd VPS-SECURITY-TOOLKIT
 ```
 
